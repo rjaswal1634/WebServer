@@ -1,0 +1,19 @@
+After Installing Linux
+
+1. Install XRDP
+
+sudo apt update
+sudo apt upgrade
+sudo apt install xrdp -y
+sudo ufw allow 3389/tcp
+
+if you are using kali linux and don't have ufw install ufw
+
+sudo apt install ufw - y
+
+sudo ufw enable
+sudo ufw status ( it should show all the allowed list ) 
+
+sudo systemctl restart xrdp
+
+sudo systemctl status xrdp ( ensure it is running) 
