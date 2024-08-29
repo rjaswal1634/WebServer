@@ -1,0 +1,50 @@
+if you want fill encryption from server to client then use the origin server certifications from cloudfflare.
+
+navigate to your cloudflare ssl/tls setting
+click on origin cerver and create a certificate
+
+store the public key into a file with .pem extension
+and the private key with .key
+
+sudo mkdir -p /etc/ssl/certs/cloudflare
+sudo mkdir -p /etc/ssl/private/cloudflare  palce to store your private and public key
+
+sudo nano /etc/ssl/certs/cloudflare/cloudflare.pem 
+copy the public key here and save it
+
+sudo nano /etc/ssl/private/cloudflare/cloudflare.key
+copy the private key here and save it. 
+
+sudo chmod 600 /etc/ssl/private/cloudflare/cloudflare.key change the permission for the private key
+
+sudo nano /etc/apache2/sites-available/default-ssl.conf (open the default config file for ssl)
+
+<VirtualHost *:443>
+    ServerAdmin webmaster@yourdomain.com
+    DocumentRoot /var/www/html
+    ServerName yourdomain.com
+    ServerAlias www.yourdomain.com
+
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/cloudflare/cloudflare.crt
+    SSLCertificateKeyFile /etc/ssl/private/cloudflare/cloudflare.key
+    SSLCACertificateFile /etc/ssl/certs/cloudflare/origin_ca_rsa_root.pem
+                                                         
+    <Directory /var/www/html>
+        AllowOverride All 
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+save these changes to the file
+
+
+  sudo a2enmod ssl
+  sudo s2ensite default-ssl.conf
+  sudo systemctl restart apache2
+
+make sure to change your router port forwarding with 443. 
+your website should be live now. 
+
