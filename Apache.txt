@@ -1,0 +1,51 @@
+sudo apt install apache2
+
+sudo systemctl start apache2
+sudo systemctl enable apache2 (to enable it at starting of your pc)
+sudo ufw allow 'Apache Full' (This command allows both HTTP (port 80) and HTTPS (port 443) traffic.)
+
+Configure your domain name servers to cloudfare before this step. 
+Add your public id, as a A record in cloud flare
+A @ publicip
+also add A record with www and the public ip
+
+sudo nano /etc/apache2/sites-available/000-default.conf
+
+change the config file to the following;
+<VirtualHost *:80>
+    ServerAdmin webmaster@yourdomain.com
+    DocumentRoot /var/www/html
+    ServerName yourdomain.com
+    ServerAlias www.yourdomain.com
+
+    <Directory /var/www/html>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+
+Note this config file is only for http traffic. without server side encryption.
+
+
+Go in your router settiong and look for port forwarding.
+
+1. forward http traffic to your pc internal ip, should look like 192.169.0 ....
+if using ssl verification forward port 443. 
+
+
+sudo a2ensite 000-default.conf
+sudo systemctl restart apache2
+
+sudo apache2ctl configtest (use this command to check if the conifig file is okay or not. )
+
+Time to sequre your website: 
+sudo apt install certbot python3-certbot-apache
+
+sudo certbot --apache -d yourdomain.com -d www.yourdomain.com
+
+sudo systemctl restart apache2
